@@ -1,0 +1,19 @@
+{
+  "name": "demo-server",
+  "version": "1.0.0",
+  "description": "A demo server for practice.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server"
+  },
+  "author": "Sinthia Akter",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.16.1",
+    "nodemon": "^3.1.10"
+  }
+}
