@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 app.use(router);
 
-console.log(process.env.JWT_SECRET_KEY);
+//console.log(process.env.JWT_SECRET_KEY);
 
 router.get("/", (req, res) => {
   //console.log(req);
