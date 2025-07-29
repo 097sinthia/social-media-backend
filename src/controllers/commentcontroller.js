@@ -1,8 +1,8 @@
 const Comment = require("../models/commentModel");
 
-const jwt = require("jsonwebtoken");
+//const jwt = require("jsonwebtoken");
 
-const secertKey = "sinthia-server-private-key";
+//const secertKey = "sinthia-server-private-key";
 
 async function createcomment(req, res) {
   const post_ID = req.query.id;
