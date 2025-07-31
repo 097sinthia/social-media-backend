@@ -1,4 +1,5 @@
 const Profile = require("../models/profileModel");
+const User = require("../models/userModel");
 
 async function createprofile(req, res) {
   const { phone, picture, bio, DOB, created_at } = req.body;
@@ -69,8 +70,70 @@ async function editprofile(req, res) {
   });
 }
 
+async function deleteAccount(req, res) {
+  const userId = req.user.id; // from auth middleware
+
+  const user = await User.findById(userId);
+  if (!user || user.isDeleted) {
+    return res
+      .status(404)
+      .json({ message: "User not found or already deleted" });
+  }
+
+  user.isDeleted = true;
+  user.deletedAt = new Date();
+
+  await user.save();
+
+  res
+    .status(200)
+    .json({ message: "Account scheduled for deletion in 30 days" });
+}
+
+async function cleanupDeletedUsers(req, res) {
+  const THIRTY_DAYS_IN_MS = 30 * 24 * 60 * 60 * 1000;
+  const cutoffDate = new Date(Date.now() - THIRTY_DAYS_IN_MS);
+
+  const result = await User.deleteMany({
+    isDeleted: true,
+    deletedAt: { $lte: cutoffDate },
+  });
+
+  res.status(200).json({
+    message: `✅ Permanently deleted ${result.deletedCount} users.`,
+  });
+}
+
+async function accoutRecovery(req, res) {
+  const user = await User.findById(req.user.id);
+
+  if (!user || !user.isDeleted) {
+    return res
+      .status(400)
+      .json({ message: "Account not eligible for recovery" });
+  }
+
+  const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+  const timeSinceDeletion = Date.now() - new Date(user.deletedAt).getTime();
+
+  if (timeSinceDeletion > THIRTY_DAYS) {
+    return res.status(403).json({ message: "Recovery window expired" });
+  }
+
+  user.isDeleted = false;
+  user.deletedAt = null;
+  await user.save();
+
+  res.json({
+    message: "Account recovered successfully",
+  });
+}
+
 module.exports = {
   createprofile: createprofile,
   alluserprofile: alluserprofile,
   editprofile: editprofile,
+  deleteAccount: deleteAccount,
+  cleanupDeletedUsers: cleanupDeletedUsers,
+  accoutRecovery: accoutRecovery,
 };

@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+
 const secertKey = "sinthia-server-private-key";
 
 async function authMiddleware(req, res, next) {
@@ -9,12 +10,13 @@ async function authMiddleware(req, res, next) {
     if (!decoded_jwt) {
       return res.status(401).send("Unauthorized");
     }
+
     console.log(decoded_jwt);
     req.user = decoded_jwt;
     next();
   } catch (err) {
     console.log(err);
-    return res.status(401).send("Unauthorizedd");
+    return res.status(401).send("Invalid Token");
   }
 }
 module.exports = {
