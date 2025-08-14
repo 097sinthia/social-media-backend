@@ -2,7 +2,8 @@ const Profile = require("../models/profileModel");
 const User = require("../models/userModel");
 
 async function createprofile(req, res) {
-  const { phone, picture, bio, DOB, created_at } = req.body;
+  const { phone, bio, DOB, created_at } = req.body;
+  const picturepath = req.file.filename ? req.file.path : null;
   const profile = await Profile.findOne({ user: req.user.id });
 
   if (profile) {
@@ -12,7 +13,7 @@ async function createprofile(req, res) {
   const newprofile = new Profile({
     user: req.user.id,
     phone: phone,
-    picture: picture,
+    picture: picturepath,
     bio: bio,
     DOB: DOB,
     created_at: created_at,

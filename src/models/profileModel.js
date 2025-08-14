@@ -12,7 +12,7 @@ const userprofileSchema = new mongoose.Schema({
   },
   picture: {
     type: String,
-    default: " ",
+    default: "",
   },
   bio: {
     type: String,

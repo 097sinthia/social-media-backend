@@ -6,10 +6,30 @@ const jwt = require("jsonwebtoken");
 const secertKey = "sinthia-server-private-key";
 
 async function allpost(req, res) {
-  const posts = await Post.find({});
+  const page = req.query.page * 1 || 1;
+  const limit = req.query.limit * 1 || 20;
+  const skip = (page - 1) * limit;
+  console.time("dbQuery");
+  // const posts = await Post.find({}).limit(limit).skip(skip);
+  // const totalResult = await Post.countDocuments();
+
+  const [posts, totalResult] = await Promise.all([
+    Post.find({}).limit(limit).skip(skip),
+    Post.countDocuments(),
+  ]);
+  console.timeEnd("dbQuery");
+
+  const totalPage = Math.ceil(totalResult / limit);
+
   return res.send({
     message: "All posts list",
     data: posts,
+    meta: {
+      page,
+      limit,
+      totalResult,
+      totalPage,
+    },
   });
 }
 
